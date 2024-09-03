@@ -47,9 +47,8 @@ public class UserServiceImpl implements UserService{
 
         return SignupResponse.builder()
                 .username(user.getUsername())
-                .nickname(signupRequest.getUsername())
+                .nickname(user.getUserNickname())
                 .authorities(authorities)
                 .build();
-
     }
 }
