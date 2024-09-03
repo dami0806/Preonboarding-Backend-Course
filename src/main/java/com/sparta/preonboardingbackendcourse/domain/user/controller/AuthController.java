@@ -1,9 +1,6 @@
 package com.sparta.preonboardingbackendcourse.domain.user.controller;
 
-import com.sparta.preonboardingbackendcourse.domain.user.dto.LoginRequest;
-import com.sparta.preonboardingbackendcourse.domain.user.dto.LoginResponse;
-import com.sparta.preonboardingbackendcourse.domain.user.dto.SignupRequest;
-import com.sparta.preonboardingbackendcourse.domain.user.dto.SignupResponse;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.*;
 import com.sparta.preonboardingbackendcourse.domain.user.service.UserService;
 import com.sparta.preonboardingbackendcourse.global.dto.ResponseDto;
 import jakarta.validation.Valid;
@@ -25,7 +22,7 @@ public class AuthController {
 
     // 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<ResponseDto<SignupResponse>>signup(@Valid @RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<ResponseDto<SignupResponse>> signup(@Valid @RequestBody SignupRequest signupRequest) {
         SignupResponse signupResponse = userService.signup(signupRequest);
         ResponseDto<SignupResponse> responseDto = new ResponseDto<>(
                 "회원가입 성공", signupResponse);
@@ -47,8 +44,14 @@ public class AuthController {
         return new ResponseEntity<>("로그인 성공", headers, HttpStatus.OK);
     }
 
-    // 엑세스토큰 재발급
+    // 리프레시 토큰을 이용한 엑세스 토큰 재발급
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refresh(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        String refreshToken = refreshTokenRequest.getRefreshToken();
+        String newAccessToken = userService.refreshAccessToken(refreshToken);
 
-
-
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", newAccessToken);
+        return new ResponseEntity<>("엑세스 토큰 재발급 성공", headers, HttpStatus.OK);
+    }
 }

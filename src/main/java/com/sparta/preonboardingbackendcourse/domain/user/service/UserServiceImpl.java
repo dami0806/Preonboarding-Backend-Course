@@ -78,6 +78,22 @@ public class UserServiceImpl implements UserService{
         return new LoginResponse(accessToken, refreshToken);
     }
 
+    @Override
+    public String refreshAccessToken(String refreshToken) {
+
+        String username = jwtUtil.getUsernameFromToken(refreshToken);
+        String storedRefreshToken = redisTemplate.opsForValue().get(username);
+
+        // 저장된 리프레시 토큰과 요청의 리프레시 토큰이 일치하는지 확인
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_VALIDATE);
+        }
+
+        User user = getUserByName(username);
+
+        return jwtUtil.createAccessToken(username, user.getRoles());
+    }
+
     public User getUserByName(String username) {
         return userRepository.findByUsername(username).orElseThrow(() ->
                 new CustomException(ErrorCode.USER_NOT_FOUND));
