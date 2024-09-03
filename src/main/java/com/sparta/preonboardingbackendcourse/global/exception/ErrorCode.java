@@ -15,8 +15,8 @@ public enum ErrorCode {
     LOGIN_FAIL(HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다."),
     WRONG_HTTP_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 HTTP 요청입니다."),
     INCORRECT_PASSWORD(HttpStatus.BAD_REQUEST, "현재 비밀번호가 일치하지 않습니다."),
-    REFRESH_TOKEN_NOT_VALIDATE(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었거나 잘못되었습니다.");
-
+    REFRESH_TOKEN_NOT_VALIDATE(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었거나 잘못되었습니다."),
+    REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다.");
     private final HttpStatus status;
     private final String message;
 }

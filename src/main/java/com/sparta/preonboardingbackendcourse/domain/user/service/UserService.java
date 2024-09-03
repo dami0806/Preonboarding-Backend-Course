@@ -12,4 +12,7 @@ public interface UserService {
     // 로그인
     LoginResponse login(LoginRequest loginRequest);
 
+    // 토큰 재발급
+    String refreshAccessToken(String refreshToken);
+
 }
