@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: Preonboarding-Backend-Course
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/preonboarding
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+  token:
+    expiration: 10000 # 임시 지정 10초
+  refresh:
+    token:
+      expiration: 30000 # 30초
+
+logging:
+  level:
+    org.springframework: DEBUG
+server:
+  port: 8080
