@@ -130,7 +130,7 @@ class UserServiceImplTest {
         when(passwordEncoder.matches(request.getPassword(), user.getPassword())).thenReturn(true);
 
         // jwt 발급
-        // Mocking static methods
+        // Mocking static
         try (MockedStatic<JwtUtil> mockedJwtUtil = mockStatic(JwtUtil.class)) {
             // jwt 발급을 Mocking
             mockedJwtUtil.when(() -> JwtUtil.createAccessToken(user.getUsername(), user.getRoles()))
@@ -168,5 +168,71 @@ class UserServiceImplTest {
         assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
     }
 
+    @DisplayName("리프레시 토큰 재발급 성공")
+    @Test
+    void refreshAccessTokenSuccess() {
 
+        // given: 유효한 JWT 형식의 리프레시 토큰
+        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VybmFtZSIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+        String username = "username";
+        User user = User.builder()
+                .username(username)
+                .build();
+
+        // RedisTemplate의 opsForValue가 호출해서 valueOperations 반환해서 리프레시 가져오기
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get(username)).thenReturn(refreshToken);
+
+        try (MockedStatic<JwtUtil> mockedJwtUtil = mockStatic(JwtUtil.class)) {
+
+            mockedJwtUtil.when(() -> JwtUtil.getUsernameFromToken(refreshToken))
+                    .thenReturn(username);
+
+            when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
+
+            // 새로운 액세스 토큰 발급되도록 미리 mock 설정
+            mockedJwtUtil.when(() -> JwtUtil.createAccessToken(username, user.getRoles()))
+                    .thenReturn("newAccessToken");
+
+            // when: 리프레시 토큰으로 새로운 액세스 토큰 요청
+            String newAccessToken = userService.refreshAccessToken(refreshToken);
+
+            // then: 새로운 액세스 토큰이 정상적으로 발급되었는지 확인
+            assertEquals("newAccessToken", newAccessToken);
+
+            mockedJwtUtil.verify(() -> JwtUtil.getUsernameFromToken(refreshToken), times(1));
+            verify(redisTemplate, times(1)).opsForValue();
+            verify(valueOperations, times(1)).get(username);
+            verify(userRepository, times(1)).findByUsername(username);
+            mockedJwtUtil.verify(() -> JwtUtil.createAccessToken(username, user.getRoles()), times(1));
+        }
+    }
+
+    @DisplayName("리프레시 토큰 재발급 실패 - 만료된 토큰")
+    @Test
+    void refreshAccessTokenFailExpiredToken() {
+        // given: 만료된 리프레시 토큰
+        String expiredRefreshToken = "expiredToken";
+        String username = "username";
+
+        // JwtUtil의 getUsernameFromToken에서 만료된 토큰이라고 예외를 던지도록 Mocking
+        try (MockedStatic<JwtUtil> mockedJwtUtil = mockStatic(JwtUtil.class)) {
+            //만료된 토큰에 대한 예외를 발생시키기
+            mockedJwtUtil.when(() -> JwtUtil.getUsernameFromToken(expiredRefreshToken))
+                    .thenThrow(new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED));
+
+            // when & then: 예외가 발생하는지 확인
+            CustomException exception = assertThrows(CustomException.class, () -> {
+                userService.refreshAccessToken(expiredRefreshToken);
+            });
+
+            // then: 예외
+            assertEquals(ErrorCode.REFRESH_TOKEN_NOT_VALIDATE, exception.getErrorCode());
+
+            // 추가 검증: Redis나 DB에 접근하지 않아야 한다
+            verify(redisTemplate, never()).opsForValue();
+            verify(userRepository, never()).findByUsername(anyString());
+            mockedJwtUtil.verify(() -> JwtUtil.getUsernameFromToken(expiredRefreshToken), times(1));
+        }
+    }
 }
