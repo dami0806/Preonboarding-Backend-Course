@@ -1,4 +1,4 @@
-package com.sparta.preonboardingbackendcourse.domain.user.dto;
+package com.sparta.preonboardingbackendcourse.domain.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
