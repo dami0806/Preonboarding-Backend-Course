@@ -1,6 +1,10 @@
 package com.sparta.preonboardingbackendcourse.domain.user.controller;
 
-import com.sparta.preonboardingbackendcourse.domain.user.dto.*;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.request.LoginRequest;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.request.RefreshTokenRequest;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.request.SignupRequest;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.response.LoginResponse;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.response.SignupResponse;
 import com.sparta.preonboardingbackendcourse.domain.user.service.UserService;
 import com.sparta.preonboardingbackendcourse.global.dto.ResponseDto;
 import jakarta.validation.Valid;

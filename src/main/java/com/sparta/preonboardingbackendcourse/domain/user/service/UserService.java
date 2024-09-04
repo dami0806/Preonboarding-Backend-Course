@@ -1,9 +1,9 @@
 package com.sparta.preonboardingbackendcourse.domain.user.service;
 
-import com.sparta.preonboardingbackendcourse.domain.user.dto.LoginRequest;
-import com.sparta.preonboardingbackendcourse.domain.user.dto.LoginResponse;
-import com.sparta.preonboardingbackendcourse.domain.user.dto.SignupRequest;
-import com.sparta.preonboardingbackendcourse.domain.user.dto.SignupResponse;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.request.LoginRequest;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.response.LoginResponse;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.request.SignupRequest;
+import com.sparta.preonboardingbackendcourse.domain.user.dto.response.SignupResponse;
 
 public interface UserService {
     // 회원가입
