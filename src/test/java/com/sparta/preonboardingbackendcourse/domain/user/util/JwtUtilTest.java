@@ -101,7 +101,7 @@ class JwtUtilTest {
         // when: JWT 엑세스 토큰 생성
         String accessToken = JwtUtil.createAccessToken("testUser", roles);
         JwtUtil.getUsernameFromToken(accessToken);
-        
+
         // then:
         assertEquals("testUser", JwtUtil.getUsernameFromToken(accessToken));
     }
