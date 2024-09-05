@@ -71,13 +71,17 @@ public class JwtUtil {
     public static String generateToken(String username, long expiration, Set<UserRole> roles) {
         JwtBuilder builder = Jwts.builder()
                 .setSubject(username) // 토큰 주체
-                .claim("roles", roles)
+               // .claim("roles", roles) -> 객체가 아닌 스트링 저장으로 수정
                 .setIssuedAt(new Date()) // 토큰 발행 시간
                 .setExpiration(new Date(System.currentTimeMillis() + expiration)) // 토큰 만료시간
                 .signWith(SignatureAlgorithm.HS256, secretKey);
 
         if (roles != null) {
-            builder.claim("roles", roles);
+            // 역할 이름만 추출해서 저장
+            Set<String> roleNames = roles.stream()
+                    .map(userRole -> userRole.getRole().getName())  // 역할 이름만 추출
+                    .collect(Collectors.toSet());
+            builder.claim("roles", roleNames);  // 역할 이름을 저장
         }
 
         return builder.compact();
@@ -120,12 +124,12 @@ public class JwtUtil {
         return extractClaims(token).getSubject();
     }
 
-
+    // 역할 불러오기
     public static List<SimpleGrantedAuthority> getRolesFromToken(String token) {
         Claims claims = extractClaims(token);
         List<String> roles = claims.get("roles", List.class);
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role)) // ROLE_ 접두사 추가
+                .map(role -> new SimpleGrantedAuthority(role))
                 .collect(Collectors.toList());
     }
 }
