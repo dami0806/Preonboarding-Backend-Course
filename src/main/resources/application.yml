@@ -39,3 +39,8 @@ logging:
     org.springframework: DEBUG
 server:
   port: 8080
+
+swagger:
+  servers:
+    local: ${SERVER_LOCAL}
+    ec2: ${SERVER_EC2}
