@@ -2,6 +2,7 @@ package com.sparta.preonboardingbackendcourse.domain.user.config;
 
 import com.sparta.preonboardingbackendcourse.global.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,12 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Value("${swagger.servers.local}")
+    private String localServer;
+
+    @Value("${swagger.servers.ec2}")
+    private String ec2Server;
 
     /**
      * SecurityFilterChain: 보안 설정을 기반으로 SecurityFilterChain 생성
@@ -59,7 +66,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8080", "http://15.165.74.149:8080"));
+        configuration.setAllowedOrigins(List.of(localServer, ec2Server));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedMethods(List.of("*")); // 모든 HTTP 메서드 허용
         configuration.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
