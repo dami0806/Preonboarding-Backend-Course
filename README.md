@@ -1,4 +1,4 @@
-# Preonboarding-Backend-Course
+# spring-security
 
 ## 💡 ERD  
 <img width="500" alt="image" src="https://github.com/user-attachments/assets/aba37361-0b30-401f-84d2-4da77639d08e">
